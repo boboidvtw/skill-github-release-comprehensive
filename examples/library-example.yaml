@@ -1,0 +1,244 @@
+# Example: Python/JavaScript Library Release
+# 適用於npm包、PyPI包等
+
+project_name: "data-processor"
+version: "v2.0.0"
+completion_percentage: 91
+current_phase: "Stable Release"
+previous_version: "v1.5.0"
+release_date: "2026-04-27"
+
+code_stats:
+  added_lines: 3200
+  deleted_lines: 890
+  modified_files: 45
+  test_coverage: 88%
+  breaking_changes: 3
+  new_exports: 12
+
+# 一句話概述
+summary: "性能優化3倍，新API v2，支援並行處理，完整的類型提示"
+
+features:
+  - name: "API v2 (新架構)"
+    description: "簡化的API設計，更符合Python慣例，向後兼容v1（帶deprecation警告）"
+    code_example: |
+      # v1 (deprecated)
+      processor.process(data=df, method='parallel')
+
+      # v2 (new)
+      processor.process(df, method='parallel')
+      processor.parallel().process(df)  # Method chaining
+    migration_guide: "https://docs.example.com/v2-migration"
+    impact: "API"
+
+  - name: "並行處理支援"
+    description: "基於Dask的分佈式處理，支援多核CPU和集群運算"
+    code_example: "data_processor/parallel.py (1-200 lines)"
+    impact: "Core Feature"
+
+  - name: "性能優化（3x faster）"
+    description: "向量化操作、緩存優化、算法改進"
+    code_example: "benchmarks/v1-vs-v2.md"
+    performance_metrics:
+      - "小數據集 (< 1M rows): 2x faster"
+      - "中等數據集 (1M-100M rows): 3x faster"
+      - "大數據集 (> 100M rows): 5x faster (with Dask)"
+    impact: "Performance"
+
+  - name: "完整類型提示 (PEP 484)"
+    description: "所有函數都有完整的類型註解，支援pyright和mypy"
+    code_example: "src/ (全部函數)"
+    impact: "Developer Experience"
+
+  - name: "Async支援"
+    description: "原生asyncio支援，async/await語法"
+    code_example: "data_processor/async.py (新增)"
+    impact: "Modern Python"
+
+  - name: "更好的錯誤信息"
+    description: "詳細的錯誤信息，指導用戶修復問題"
+    code_example: "data_processor/errors.py (新增)"
+    impact: "Developer Experience"
+
+breaking_changes:
+  - description: "Python 3.7 支援移除，現需 Python 3.8+"
+    reason: "為了使用最新的類型提示和asyncio特性"
+    migration: "升級Python版本到3.8或更高"
+
+  - description: "API v1 moved to data_processor.v1_compat（需import）"
+    reason: "簡化默認命名空間，鼓勵遷移到v2"
+    migration: |
+      # Before
+      from data_processor import process
+
+      # After (use v2)
+      from data_processor import process
+
+      # Or compatibility mode
+      from data_processor.v1_compat import process
+
+  - description: "DataFrame.process()方法簽名變更"
+    reason: "簡化參數，更符合Pandas慣例"
+    migration: "見v2遷移指南"
+
+improvements:
+  - "文檔完全重寫（Sphinx + ReadTheDocs）"
+  - "100+ 新增單元測試"
+  - "集成黑盒測試（pytest）"
+  - "性能基準化（pytest-benchmark）"
+  - "Github Actions CI/CD"
+  - "自動發佈到PyPI"
+
+known_limitations:
+  - name: "Spark集成"
+    description: "當前只支援單機Dask，不支援Spark分佈式"
+    planned_version: "v2.1"
+    timeline: "3-4周"
+    workaround: "可使用Dask on Kubernetes作為替代"
+
+  - name: "GPU加速"
+    description: "CUDA/cuDF支援正在開發中"
+    planned_version: "v2.2"
+    timeline: "2月"
+
+  - name: "Polars集成"
+    description: "計劃支援Polars DataFrame，目前只支援Pandas/Dask"
+    planned_version: "v3.0"
+    timeline: "3月"
+
+dependencies:
+  - name: "Python"
+    min_version: "3.8"
+    max_version: "3.12"
+
+  - name: "pandas"
+    min_version: "1.3.0"
+    note: "核心依賴"
+
+  - name: "numpy"
+    min_version: "1.20.0"
+    note: "核心依賴"
+
+  - name: "dask"
+    min_version: "2022.1.1"
+    optional: true
+    note: "用於並行處理"
+
+optional_dependencies:
+  dev:
+    - "pytest >= 7.0"
+    - "pytest-cov >= 3.0"
+    - "mypy >= 0.950"
+    - "black >= 22.0"
+
+  docs:
+    - "sphinx >= 4.0"
+    - "sphinx-rtd-theme >= 1.0"
+
+installation:
+  from_pypi: "pip install data-processor"
+  with_dask: "pip install data-processor[dask]"
+  dev_mode: "pip install -e '.[dev,docs]'"
+
+usage_example: |
+  from data_processor import DataProcessor
+  import pandas as pd
+
+  df = pd.read_csv('data.csv')
+
+  # Simple processing
+  processor = DataProcessor(method='parallel')
+  result = processor.process(df)
+
+  # Async processing
+  async def async_process():
+    async_processor = DataProcessor(async_mode=True)
+    result = await async_processor.process(df)
+
+  # Distributed with Dask
+  processor = DataProcessor(backend='dask')
+  result = processor.process(df)
+
+testing:
+  unit_tests: "850+ tests (88% coverage)"
+  integration_tests: "120+ tests"
+  performance_tests: "50+ benchmarks"
+  test_runner: "pytest"
+  ci_platform: "GitHub Actions"
+  coverage_tool: "pytest-cov"
+  coverage_target: "85%+ (currently 88%)"
+
+documentation:
+  api_docs: "https://data-processor.readthedocs.io/"
+  quickstart: "docs/quickstart.md"
+  migration_guide: "docs/v1-to-v2.md"
+  examples: "examples/ (20+ Jupyter notebooks)"
+  tutorials: "docs/tutorials/"
+
+performance_metrics:
+  v1_baseline: "100%"
+  v2_small_datasets: "50% (2x faster)"
+  v2_medium_datasets: "33% (3x faster)"
+  v2_large_datasets: "20% (5x faster with Dask)"
+
+roadmap:
+  Phase 3:
+    timeline: "3-4周"
+    items:
+      - "Spark集成（spark-dask連接）"
+      - "Polars DataFrame支援"
+      - "性能基準儀表板"
+      - "更多文檔範例"
+
+  Phase 4:
+    timeline: "4-6周"
+    items:
+      - "GPU加速（CUDA）"
+      - "分佈式計算優化"
+      - "插件架構"
+      - "社區貢獻集成"
+
+  v3.0:
+    timeline: "2-3月"
+    items:
+      - "Multi-backend支援（Spark, Polars, Dask）"
+      - "ML pipeline集成"
+      - "AutoML功能"
+      - "企業支援方案"
+
+contributors:
+  maintainers:
+    - "Alice (Lead, ML expert)"
+    - "Bob (Performance, Dask)"
+
+  contributors:
+    - "Carol (Docs)"
+    - "David (Tests)"
+    - "50+ 社區貢獻者"
+
+benchmarks:
+  small_dataset_1m_rows:
+    v1_5: "2.5s"
+    v2_0: "0.8s"
+    improvement: "3.1x faster"
+
+  medium_dataset_50m_rows:
+    v1_5: "45s"
+    v2_0: "15s"
+    improvement: "3x faster"
+
+  large_dataset_500m_rows_with_dask:
+    v1_5: "timeout (> 5min)"
+    v2_0: "28s"
+    improvement: "完全可用"
+
+license: "Apache 2.0"
+repository: "https://github.com/example/data-processor"
+package_registry: "https://pypi.org/project/data-processor/"
+
+contact:
+  github_issues: "https://github.com/example/data-processor/issues"
+  documentation: "https://data-processor.readthedocs.io/"
+  email: "support@example.com"
+  discussion_forum: "https://github.com/example/data-processor/discussions"

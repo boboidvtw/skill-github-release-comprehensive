@@ -1,0 +1,151 @@
+# Example: Web Application Release
+# 適用於React, Vue, Angular等Web框架
+
+project_name: "MyAwesomeApp"
+version: "v2.1.0"
+completion_percentage: 89
+current_phase: "Phase 2 Complete"
+previous_version: "v2.0.0"
+release_date: "2026-04-27"
+
+code_stats:
+  added_lines: 2345
+  deleted_lines: 156
+  modified_files: 58
+  test_coverage: 84%
+  breaking_changes: 1
+
+features:
+  - name: "實時協作編輯"
+    description: "支援多用戶同時編輯，使用WebSocket + Operational Transformation"
+    code_example: "src/collab/editor.ts (1-150 lines)"
+    impact: "Core Feature"
+
+  - name: "暗黑模式"
+    description: "完整的CSS變數主題系統，支援自訂主題"
+    code_example: "src/theme/ (全新目錄)"
+    impact: "UX Enhancement"
+
+  - name: "離線模式"
+    description: "Service Worker + IndexedDB，支援離線使用基本功能"
+    code_example: "src/offline/sync.ts (新增)"
+    impact: "Performance"
+
+  - name: "性能優化"
+    description: "减少首頁加載時間 50%（2.8s → 1.4s），使用Code Splitting + Tree Shaking"
+    code_example: "webpack.config.js, src/lazy-load/ (新增)"
+    impact: "Performance"
+
+  - name: "團隊管理面板"
+    description: "新的admin面板，管理成員、權限、配額"
+    code_example: "src/admin/ (新增32個component)"
+    impact: "Enterprise Feature"
+
+improvements:
+  - name: "TypeScript升級"
+    description: "4.9 → 5.0，嚴格模式啟用"
+    impact: "Code Quality"
+
+  - name: "測試框架升級"
+    description: "Vitest集成，Jest → Vitest遷移"
+    impact: "Developer Experience"
+
+  - name: "API v2"
+    description: "新的REST API endpoint，支援GraphQL"
+    impact: "Backend"
+
+known_limitations:
+  - name: "移動端UI"
+    description: "響應式UI在小屏幕上還需優化，特別是表單輸入"
+    planned_version: "v2.2"
+    timeline: "2-3周"
+    workaround: "可使用桌面版或旋轉屏幕使用平板模式"
+
+  - name: "國際化"
+    description: "目前只支援英文和繁體中文，簡體中文待實現"
+    planned_version: "v3.0"
+    timeline: "1-2月"
+
+  - name: "Safari兼容性"
+    description: "某些CSS特性在Safari 15以下不支援"
+    planned_version: "v2.2"
+    timeline: "2-3周"
+
+breaking_changes:
+  - description: "API v1已棄用，請遷移到v2"
+    migration_guide: "https://docs.example.com/api-migration"
+    deadline: "2026-07-27"
+
+  - description: "組件prop API變更（詳見遷移指南）"
+    migration_guide: "https://docs.example.com/component-migration"
+
+roadmap_phases:
+  Phase 3:
+    timeline: "2-3周"
+    priority: "High"
+    items:
+      - "移動端UI完善（響應式優化）"
+      - "Safari兼容性修復"
+      - "性能監控面板（Lighthouse集成）"
+      - "Accessibility (WCAG 2.1 AA)"
+      - "E2E測試補充（Playwright）"
+
+  Phase 4:
+    timeline: "3-4周"
+    priority: "Medium"
+    items:
+      - "國際化框架（i18next）"
+      - "簡體中文翻譯"
+      - "日語翻譯"
+      - "插件系統PoC"
+      - "自訂主題編輯器"
+
+  v3.0:
+    timeline: "2-3月"
+    priority: "Strategic"
+    items:
+      - "AI助手集成（OpenAI API）"
+      - "實時通知系統（推送通知）"
+      - "數據導出（CSV, Excel, JSON）"
+      - "雲端備份"
+      - "企業SSO (OAuth2, SAML)"
+
+dependencies:
+  - name: "Node.js"
+    min_version: "18.0.0"
+
+  - name: "npm / yarn"
+    min_version: "8.0.0"
+
+  - name: "TypeScript"
+    version: "5.0"
+
+installation_steps:
+  - "npm install (or yarn install)"
+  - "npm run build"
+  - "npm start"
+  - "Visit http://localhost:3000"
+
+testing_checklist:
+  - "✅ Unit tests (890 tests, 84% coverage)"
+  - "✅ Integration tests (API endpoints)"
+  - "⚠️ E2E tests (需擴展，目前40%覆蓋)"
+  - "✅ Performance tests (Lighthouse CI)"
+  - "✅ Security scan (Snyk)"
+  - "⚠️ Accessibility tests (WCAG，目前70%)"
+
+contributors:
+  - "Alice Chen (Lead Developer)"
+  - "Bob Smith (Backend Engineer)"
+  - "Carol White (Designer)"
+  - "David Lee (QA Engineer)"
+  - "20+ 社區貢獻者"
+
+contact_info:
+  github_issues: "https://github.com/example/myawesomeapp/issues"
+  email: "support@example.com"
+  discord: "https://discord.gg/myawesomeapp"
+  documentation: "https://docs.example.com"
+
+license: "MIT"
+repository: "https://github.com/example/myawesomeapp"
