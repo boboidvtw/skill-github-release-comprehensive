@@ -52,6 +52,125 @@ cp -r skill-github-release-comprehensive ~/.claude/skills-lib/
 自動：當完成重大Project phase時系統會建議
 ```
 
+## 環境前置檢查（必須先執行）
+
+**在任何步驟前，先執行以下檢查，根據結果決定執行模式：**
+
+### 檢查腳本
+```bash
+echo "=== GitHub Release Skill 環境檢查 ==="
+
+# 1. 確認在git repo中
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+  echo "✅ git repo: OK"
+else
+  echo "❌ 不在git repo中 → 請先執行 git init 或切換到正確目錄"
+  exit 1
+fi
+
+# 2. 確認gh CLI已安裝
+if command -v gh > /dev/null 2>&1; then
+  echo "✅ gh CLI: $(gh --version | head -1)"
+else
+  echo "⚠️  gh CLI未安裝 → 將只生成本地release-notes.md"
+  GH_AVAILABLE=false
+fi
+
+# 3. 確認gh已認證（不彈出登入）
+if [ "${GH_AVAILABLE}" != "false" ]; then
+  if gh auth status > /dev/null 2>&1; then
+    echo "✅ GitHub帳號: $(gh api user --jq .login 2>/dev/null || echo '已認證')"
+  else
+    echo "⚠️  GitHub未登入 → 將只生成本地release-notes.md"
+    GH_AVAILABLE=false
+  fi
+fi
+
+# 4. 確認網絡可達GitHub
+if [ "${GH_AVAILABLE}" != "false" ]; then
+  if gh api rate_limit > /dev/null 2>&1; then
+    echo "✅ GitHub連線: OK"
+  else
+    echo "⚠️  無法連線GitHub → 將只生成本地release-notes.md"
+    GH_AVAILABLE=false
+  fi
+fi
+
+echo ""
+if [ "${GH_AVAILABLE}" = "false" ]; then
+  echo "📋 執行模式：本地模式（生成release-notes.md，不推送）"
+else
+  echo "🚀 執行模式：完整模式（生成 + 推送GitHub）"
+fi
+```
+
+### 檢查結果與執行模式
+
+| 狀態 | gh安裝 | gh認證 | 網絡 | 執行模式 |
+|---|---|---|---|---|
+| 完整模式 | ✅ | ✅ | ✅ | 生成 + 自動推送GitHub |
+| 本地模式 | ❌ | - | - | 只生成release-notes.md |
+| 本地模式 | ✅ | ❌ | - | 只生成release-notes.md |
+| 本地模式 | ✅ | ✅ | ❌ | 只生成release-notes.md |
+
+### 優雅降級處理
+
+**完整模式**：生成 release-notes.md → 自動 `gh release create` → 顯示URL
+
+**本地模式**（任一檢查失敗）：
+```
+✅ Release Notes已生成 → release-notes.md
+
+若需推送到GitHub，請：
+
+方式1: gh CLI（推薦）
+  gh auth login
+  gh release create <tag> --notes-file release-notes.md
+
+方式2: GitHub網頁
+  1. 前往 github.com/<user>/<repo>/releases/new
+  2. 填入Tag版本號
+  3. 複製 release-notes.md 內容貼入說明欄位
+  4. 點擊 Publish release
+
+方式3: 儲存備用
+  release-notes.md 已保存於當前目錄，可稍後再推送
+```
+
+### 修復引導
+
+若需切換至完整模式，Skill會提供對應修復步驟：
+
+**未安裝gh CLI**：
+```bash
+# macOS
+brew install gh
+
+# Windows (Chocolatey)
+choco install gh
+
+# Linux
+sudo apt install gh
+
+# 或從官網下載: https://cli.github.com
+```
+
+**gh未認證**：
+```bash
+gh auth login
+# 選擇 GitHub.com → HTTPS → Web browser
+# 在瀏覽器中完成授權即可
+```
+
+**重新執行環境檢查**：
+```bash
+# 修復後再次確認
+gh auth status
+gh api user --jq .login
+```
+
+---
+
 ## 執行流程
 
 ### 第1步：蒐集項目信息
@@ -195,18 +314,30 @@ GitHub Release Notes (900-1200 字)
 # 驗證鏈接與引用正確性
 ```
 
-### 3. GitHub推送 (5 min)
+### 3. 推送 (5 min)
+
+**完整模式（GitHub可用）**：
 ```bash
 gh release create <tag> \
   --title "Release <version>" \
   --notes-file release-notes.md
+
+# 輸出：https://github.com/<user>/<repo>/releases/tag/<version>
+```
+
+**本地模式（GitHub不可用）**：
+```
+✅ release-notes.md 已儲存至當前目錄
+📋 請稍後使用以下任一方式推送：
+   - gh release create <tag> --notes-file release-notes.md
+   - 前往 GitHub 網頁手動貼上內容
 ```
 
 ### 4. 驗證 (5 min)
 ```bash
-# 檢視GitHub頁面
-# 確認Notes完整且格式正確
-# 驗證資源鏈接
+# 完整模式：直接檢視返回的GitHub URL
+# 本地模式：確認 release-notes.md 內容完整
+cat release-notes.md | wc -l  # 應 > 50 行
 ```
 
 ## 使用範例
@@ -274,7 +405,15 @@ roadmap_phases:
 
 ## 快速檢查清單
 
-在推送前驗證：
+### 環境檢查（Skill自動執行）
+- [ ] 在git repo中（`git status` 有效）
+- [ ] gh CLI已安裝（`gh --version`）
+- [ ] gh已認證（`gh auth status`）
+- [ ] GitHub網絡可達（`gh api rate_limit`）
+
+若上述任一失敗 → 自動切換本地模式，仍可生成release-notes.md
+
+### 內容檢查（在生成前確認）
 - [ ] ROADMAP.md 已更新為最新進度
 - [ ] README.md 包含快速開始步驟
 - [ ] 代碼統計準確（git log驗證）
@@ -298,6 +437,9 @@ roadmap_phases:
 - 需手動提供功能清單（未來可自動解析git log）
 - 不支援自動生成性能基準對比
 - 多語言支援需手動翻譯
+
+### 已解決（v1.1）
+- ✅ ~~GitHub不可用時卡住~~ → 加入前置環境檢查 + 優雅降級至本地模式
 
 ### 規劃中的改進
 - [ ] 自動生成功能矩陣表格（比較git log）
